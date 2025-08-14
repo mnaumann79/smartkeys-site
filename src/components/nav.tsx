@@ -22,16 +22,9 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
 }
 
 export default function Nav() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
-
-  async function signOut() {
-    setBusy(true);
-    await supabase.auth.signOut();
-    setBusy(false);
-    router.push("/");
-  }
 
   return (
     <header className="sticky top-0 z-50 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -47,12 +40,26 @@ export default function Nav() {
             variant="outline"
             size="icon"
             aria-label="Toggle theme"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onClick={() =>
+              setTheme(document.documentElement.classList.contains("dark") ? "light" : "dark")
+            }
           >
-            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+            {/* Always render both; CSS decides visibility. Identical markup on server/client. */}
+            <Sun className="hidden dark:inline" size={16} aria-hidden />
+            <Moon className="inline dark:hidden" size={16} aria-hidden />
+            <span className="sr-only">Toggle theme</span>
           </Button>
 
-          <Button variant="ghost" onClick={signOut} disabled={busy}>
+          <Button
+            variant="ghost"
+            onClick={async () => {
+              setBusy(true);
+              await supabase.auth.signOut();
+              setBusy(false);
+              router.push("/");
+            }}
+            disabled={busy}
+          >
             Sign out
           </Button>
         </div>

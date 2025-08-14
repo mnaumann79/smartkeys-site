@@ -1,17 +1,23 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <main className="px-6 py-16">
       <section className="mx-auto max-w-3xl text-center space-y-6">
         <h1 className="text-5xl font-bold tracking-tight">SmartKeys</h1>
-        <p className="text-lg text-muted-foreground">
-          Global autocorrect for Windows. Type faster. Fewer errors.
-        </p>
+        <p className="text-lg text-muted-foreground">Global autocorrect for Windows. Type faster. Fewer errors.</p>
         <div className="flex justify-center gap-3">
           <Button>Download</Button>
-          <Button variant="outline">Sign in</Button>
+          <Button variant="outline">
+            <Link
+              href="/signin"
+              className="font-bold"
+            >
+              Sign in
+            </Link>
+          </Button>
         </div>
       </section>
 
