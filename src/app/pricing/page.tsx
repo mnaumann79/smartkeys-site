@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { CheckoutButton } from "@/components/checkout-button";
 
 export const metadata: Metadata = { title: "Pricing — SmartKeys" };
 
@@ -12,8 +13,6 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "",
-    ctaHref: "/download",
-    cta: "Download",
     highlights: ["Core autocorrect", "System-wide", "Local processing"],
     fine: "Community support",
     badge: null as string | null,
@@ -22,8 +21,6 @@ const plans = [
     name: "Pro",
     price: "$4.99",
     period: "/mo",
-    ctaHref: "/signin?redirect=/dashboard",
-    cta: "Sign in to purchase",
     highlights: ["Custom dictionary", "Cloud sync (opt-in)", "Priority updates"],
     fine: "Cancel anytime",
     badge: "Popular",
@@ -32,8 +29,6 @@ const plans = [
     name: "Lifetime",
     price: "$39",
     period: " one-time",
-    ctaHref: "/signin?redirect=/dashboard",
-    cta: "Sign in to purchase",
     highlights: ["All Pro features", "Lifetime license", "Early features access"],
     fine: "One device per license",
     badge: "Best value",
@@ -49,8 +44,11 @@ export default async function PricingPage() {
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">
-        {plans.map((p) => (
-          <Card key={p.name} className="flex flex-col">
+        {plans.map(p => (
+          <Card
+            key={p.name}
+            className="flex flex-col"
+          >
             <CardContent className="p-6 flex-1 flex flex-col">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">{p.name}</h2>
@@ -65,7 +63,7 @@ export default async function PricingPage() {
               <Separator className="my-4" />
 
               <ul className="space-y-2 text-sm text-muted-foreground">
-                {p.highlights.map((h) => (
+                {p.highlights.map(h => (
                   <li key={h}>• {h}</li>
                 ))}
               </ul>
@@ -73,9 +71,19 @@ export default async function PricingPage() {
               <div className="mt-4 text-xs text-muted-foreground">{p.fine}</div>
 
               <div className="mt-6">
-                <Link href={p.ctaHref}>
-                  <Button className="w-full">{p.cta}</Button>
-                </Link>
+                {p.name === "Free" ? (
+                  // Anchor styled as button (no nested <button>)
+                  <Button
+                    asChild
+                    className="w-full"
+                  >
+                    <Link href="/download">Download</Link>
+                  </Button>
+                ) : p.name === "Pro" ? (
+                  <CheckoutButton priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO!}>Buy Pro</CheckoutButton>
+                ) : (
+                  <CheckoutButton priceId={process.env.NEXT_PUBLIC_STRIPE_PRICE_LIFETIME!}>Buy Lifetime</CheckoutButton>
+                )}
               </div>
             </CardContent>
           </Card>
