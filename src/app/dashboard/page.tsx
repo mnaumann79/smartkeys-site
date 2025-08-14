@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import SignOut from "@/app/dashboard/signout";
 
 export default async function Dashboard() {
   const supabase = createClient();
@@ -19,7 +18,6 @@ export default async function Dashboard() {
       <pre className="text-sm bg-muted p-4 rounded-md overflow-auto">
         {JSON.stringify({ user: { id: user.id, email: user.email }, profile }, null, 2)}
       </pre>
-      <SignOut />
     </main>
   );
 }
