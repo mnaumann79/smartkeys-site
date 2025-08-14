@@ -16,6 +16,7 @@ export async function issueTestLicense() {
     user_id: user.id,
     license_key: key,
     status: "active",
+    source: "dev"
   });
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/licenses");

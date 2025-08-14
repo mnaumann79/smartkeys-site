@@ -7,12 +7,27 @@ import { issueTestLicense, revokeLicense } from "./actions";
 
 export default async function LicensesPage() {
   const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) redirect("/signin?redirect=/dashboard/licenses");
 
   const { data: licenses } = await supabase
     .from("licenses")
-    .select("id, license_key, status, created_at")
+    .select(
+      `
+    id,
+    license_key,
+    status,
+    source,
+    created_at,
+    activations (
+      device_id,
+      device_name,
+      activated_at
+    )
+  `
+    )
     .order("created_at", { ascending: false });
 
   async function createDevLicense() {
@@ -32,7 +47,10 @@ export default async function LicensesPage() {
       <Card>
         <CardContent className="p-4 space-y-3">
           <form action={createDevLicense}>
-            <Button type="submit" disabled={process.env.NODE_ENV !== "development"}>
+            <Button
+              type="submit"
+              disabled={process.env.NODE_ENV !== "development"}
+            >
               Create test license (dev only)
             </Button>
           </form>
@@ -44,30 +62,45 @@ export default async function LicensesPage() {
       </Card>
 
       <div className="space-y-3">
-        {(licenses ?? []).map((l) => (
-          <Card key={l.id}>
-            <CardContent className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-              <div>
-                <div className="text-sm">Key</div>
-                <div className="flex items-center gap-2">
-                  <code className="text-xs">{l.license_key}</code>
-                  <CopyButton text={l.license_key} />
+        {(licenses ?? []).map(l => {
+          const bound = l.activations?.[0]; // unique(license_id) → 0 or 1 row
+          return (
+            <Card key={l.id}>
+              <CardContent className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <div className="text-sm">Key</div>
+                  <div className="mt-1 text-xs">source: {l.source}</div>
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs">{l.license_key}</code>
+                    <CopyButton text={l.license_key} />
+                  </div>
+
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {new Date(l.created_at).toLocaleString()} · {l.status}
+                  </div>
+
+                  <div className="text-xs mt-1">
+                    {bound ? (
+                      <>
+                        <span className="font-medium">Activated:</span> {bound.device_name ?? bound.device_id} ·{" "}
+                        {new Date(bound.activated_at).toLocaleString()}
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">Not activated yet</span>
+                    )}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">
-                  {new Date(l.created_at).toLocaleString()} · {l.status}
-                </div>
-              </div>
-              {l.status === "active" && (
-                <form action={revoke.bind(null, l.id)}>
-                  <Button variant="outline">Revoke</Button>
-                </form>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-        {(!licenses || licenses.length === 0) && (
-          <div className="text-sm text-muted-foreground">No licenses yet.</div>
-        )}
+
+                {l.status === "active" && (
+                  <form action={revoke.bind(null, l.id)}>
+                    <Button variant="outline">Revoke</Button>
+                  </form>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}{" "}
+        {(!licenses || licenses.length === 0) && <div className="text-sm text-muted-foreground">No licenses yet.</div>}
       </div>
     </main>
   );
