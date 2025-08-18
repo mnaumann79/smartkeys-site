@@ -1,0 +1,28 @@
+NEXT_PUBLIC_SUPABASE_URL=https://hncqoahuwktxmoclvvai.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuY3FvYWh1d2t0eG1vY2x2dmFpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUxMTA1ODcsImV4cCI6MjA3MDY4NjU4N30.IHJwBLzxLfJOG8GxUUfGyMfwzNTWSfidSwaFjvell9g
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+STRIPE_SECRET_KEY=sk_test_51Rw6Q4PMEDk9AkIuLaqBMQFplzGatKKBGpVTRnL8TUwUn4OZ9RJNyGPiexpv8rJ57sQk0zqgNTcmUVBECQzmIf4w00Z4JDoUlf
+STRIPE_WEBHOOK_SECRET=whsec_06096be24e0c6d93382ee23764e7ddb06f8b64f98ca1687fb73e4a0a3a514849
+NEXT_PUBLIC_STRIPE_PRICE_PRO=price_1Rw6WNPMEDk9AkIuT1JBIYtS         # recurring (monthly)
+NEXT_PUBLIC_STRIPE_PRICE_LIFETIME=price_1Rw6YpPMEDk9AkIutHio6nqe    # one-time
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhuY3FvYWh1d2t0eG1vY2x2dmFpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NTExMDU4NywiZXhwIjoyMDcwNjg2NTg3fQ.o6UYQpDIa1z8dYdxOqhjZTbByHfIIqK370GRGCLJVyw                  # server-only
+
+LICENSE_SIGNING_SECRET=change-this
+
+
+# POSTGRES_PW="6LuvWkekLbvXlsHf"
+
+# GITHUB_CLIENT_ID=Ov23li76ALkONZ9r4SNY
+# GITHUB_CLIENT_SECRET=1c521c43351e58d812f5c2651a7ad118542cd927
+
+# GOOGLE_CLIENT_ID=467038667426-rc1evjfi3j1970jb7g2ikmmrq84524ap.apps.googleusercontent.com
+# GOOGLE_CLIENT_SECRET=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
+
+# SK-UYS7D-TYYKQ-XAMVD-UW6QN
+
+# curl -X POST http://localhost:3000/api/licenses/activate \
+#   -H "content-type: application/json" \
+#   -d "{\"license_key\":\"SK-UYS7D-TYYKQ-XAMVD-UW6QN\",\"device_id\":\"PC-ABC\",\"device_name\":\"My PC\"}"
+
+# curl "http://localhost:3000/api/licenses/verify?license_key=SK-UYS7D-TYYKQ-XAMVD-UW6QN&device_id=PC-ABC"

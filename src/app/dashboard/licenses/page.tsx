@@ -3,32 +3,52 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/copy-button";
-import { issueTestLicense, revokeLicense } from "./actions";
+import { issueTestLicense, revokeLicense, unbindDevice } from "./actions";
+
+type Activation = { device_id: string; device_name: string; activated_at: string };
+type License = {
+  id: string;
+  license_key: string;
+  status: string;
+  source: string;
+  created_at: string;
+  activation: Activation | null;
+};
 
 export default async function LicensesPage() {
   const supabase = createClient();
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) redirect("/signin?redirect=/dashboard/licenses");
 
-  const { data: licenses } = await supabase
+  const { data: raw } = await supabase
     .from("licenses")
     .select(
       `
-    id,
-    license_key,
-    status,
-    source,
-    created_at,
-    activations (
-      device_id,
-      device_name,
-      activated_at
-    )
-  `
+        id,
+        license_key,
+        status,
+        source,
+        created_at,
+        activation:activations!activations_license_id_fkey(
+          device_id, 
+          device_name, 
+          activated_at
+        )
+      `
     )
     .order("created_at", { ascending: false });
+
+  const licenses: License[] = (raw ?? []).map(r => ({
+    id: r.id,
+    license_key: r.license_key,
+    status: r.status,
+    source: r.source,
+    created_at: r.created_at,
+    activation: Array.isArray(r.activation) ? r.activation[0] ?? null : r.activation ?? null,
+  }));
 
   async function createDevLicense() {
     "use server";
@@ -63,7 +83,7 @@ export default async function LicensesPage() {
 
       <div className="space-y-3">
         {(licenses ?? []).map(l => {
-          const bound = l.activations?.[0]; // unique(license_id) → 0 or 1 row
+          const a = l.activation;
           return (
             <Card key={l.id}>
               <CardContent className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -80,10 +100,10 @@ export default async function LicensesPage() {
                   </div>
 
                   <div className="text-xs mt-1">
-                    {bound ? (
+                    {a ? (
                       <>
-                        <span className="font-medium">Activated:</span> {bound.device_name ?? bound.device_id} ·{" "}
-                        {new Date(bound.activated_at).toLocaleString()}
+                        <span className="font-medium">Activated:</span> {a.device_name ?? a.device_id} ·{" "}
+                        {new Date(a.activated_at).toLocaleString()}
                       </>
                     ) : (
                       <span className="text-muted-foreground">Not activated yet</span>
@@ -94,6 +114,11 @@ export default async function LicensesPage() {
                 {l.status === "active" && (
                   <form action={revoke.bind(null, l.id)}>
                     <Button variant="outline">Revoke</Button>
+                  </form>
+                )}
+                {l.status === "active" && l.activation && (
+                  <form action={unbindDevice.bind(null, l.id)}>
+                    <Button variant="outline">Unbind device</Button>
                   </form>
                 )}
               </CardContent>

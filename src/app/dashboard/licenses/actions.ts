@@ -16,7 +16,7 @@ export async function issueTestLicense() {
     user_id: user.id,
     license_key: key,
     status: "active",
-    source: "dev"
+    source: "dev",
   });
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard/licenses");
@@ -30,5 +30,18 @@ export async function revokeLicense(id: string) {
   if (!user) throw new Error("auth");
   const { error } = await supabase.from("licenses").update({ status: "revoked" }).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);
+  revalidatePath("/dashboard/licenses");
+}
+
+export async function unbindDevice(licenseId: string) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("auth");
+
+  const { error } = await supabase.from("activations").delete().eq("license_id", licenseId);
+  if (error) throw new Error(error.message);
+
   revalidatePath("/dashboard/licenses");
 }

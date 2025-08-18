@@ -10,7 +10,7 @@ export default function Home() {
         <p className="text-lg text-muted-foreground">Global autocorrect for Windows. Type faster. Fewer errors.</p>
         <div className="flex justify-center gap-3">
           <Button>Download</Button>
-          <Button variant="outline">
+          <Button variant="outline" className="cursor-pointer">
             <Link
               href="/signin"
               className="font-bold"

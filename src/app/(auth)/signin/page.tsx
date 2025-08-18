@@ -61,7 +61,7 @@ export default function SignIn() {
             />
           </div>
           <Button
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={sendMagicLink}
             disabled={!email || busy}
           >
@@ -70,7 +70,7 @@ export default function SignIn() {
           <div className="text-center text-sm">or</div>
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={signInGitHub}
             disabled={busy}
           >
@@ -78,7 +78,7 @@ export default function SignIn() {
           </Button>
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full cursor-pointer"
             onClick={signInGoogle}
             disabled={busy}
           >
