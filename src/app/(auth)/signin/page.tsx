@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function SignIn() {
+function SignInForm() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const router = useRouter();
@@ -40,52 +40,59 @@ export default function SignIn() {
       provider: "google",
       options: {
         redirectTo: callbackUrl,
-        // Optional: request Google refresh token
         queryParams: { access_type: "offline", prompt: "consent" },
       },
     });
   }
 
   return (
+    <Card className="mx-auto max-w-md">
+      <CardContent className="p-6 space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="you@email.com"
+          />
+        </div>
+        <Button
+          className="w-full cursor-pointer"
+          onClick={sendMagicLink}
+          disabled={!email || busy}
+        >
+          Send magic link
+        </Button>
+        <div className="text-center text-sm">or</div>
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer"
+          onClick={signInGitHub}
+          disabled={busy}
+        >
+          Continue with GitHub
+        </Button>
+        <Button
+          variant="outline"
+          className="w-full cursor-pointer"
+          onClick={signInGoogle}
+          disabled={busy}
+        >
+          Continue with Google
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function SignIn() {
+  return (
     <main className="px-6 py-16">
-      <Card className="mx-auto max-w-md">
-        <CardContent className="p-6 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="you@email.com"
-            />
-          </div>
-          <Button
-            className="w-full cursor-pointer"
-            onClick={sendMagicLink}
-            disabled={!email || busy}
-          >
-            Send magic link
-          </Button>
-          <div className="text-center text-sm">or</div>
-          <Button
-            variant="outline"
-            className="w-full cursor-pointer"
-            onClick={signInGitHub}
-            disabled={busy}
-          >
-            Continue with GitHub
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full cursor-pointer"
-            onClick={signInGoogle}
-            disabled={busy}
-          >
-            Continue with Google
-          </Button>
-        </CardContent>
-      </Card>
+      <Suspense>
+        <SignInForm />
+      </Suspense>
     </main>
   );
 }
