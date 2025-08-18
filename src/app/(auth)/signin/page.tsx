@@ -27,6 +27,7 @@ function SignInForm() {
 
   async function signInGitHub() {
     setBusy(true);
+    console.log(callbackUrl)
     await supabase.auth.signInWithOAuth({
       provider: "github",
       options: { redirectTo: callbackUrl },
