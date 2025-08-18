@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
 type ProfileMeta = { full_name?: string; avatar_url?: string };
+
 function metaString(meta: unknown, key: keyof ProfileMeta): string | null {
   if (typeof meta === "object" && meta) {
     const v = (meta as Record<string, unknown>)[key as string];
