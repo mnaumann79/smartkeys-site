@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 import { NextResponse } from "next/server";
 import { stripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
+import { APP_URL } from "@/lib/config";
 
 type Body = { priceId: string };
 
@@ -26,8 +27,8 @@ export async function POST(req: Request) {
     client_reference_id: user.id, // <-- backup
     line_items: [{ price: priceId, quantity: 1 }],
     metadata: { user_id: user.id }, // <-- primary
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing`,
+    success_url: `${APP_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${APP_URL}/pricing`,
   });
 
   return NextResponse.json({ url: session.url });

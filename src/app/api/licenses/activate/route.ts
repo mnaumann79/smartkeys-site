@@ -94,6 +94,7 @@ export async function POST(req: Request) {
     // Only one success return here
     if (successPayload) {
       const { json: j, sig } = signPayload(successPayload);
+      console.log("License activated:", j);
       revalidatePath("/dashboard/licenses");
       return new NextResponse(j, { headers: { "x-license-sig": sig, "content-type": "application/json" } });
     }

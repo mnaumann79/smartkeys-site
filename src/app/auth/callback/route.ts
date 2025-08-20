@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { APP_URL } from "@/lib/config";
 
 type ProfileMeta = { full_name?: string; avatar_url?: string };
 
@@ -33,5 +34,5 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.redirect(new URL(redirect, process.env.NEXT_PUBLIC_APP_URL));
+  return NextResponse.redirect(new URL(redirect, APP_URL));
 }
