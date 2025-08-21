@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { APP_URL } from "@/lib/config";
 
 function SignInForm() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const router = useRouter();
   const cb = useSearchParams().get("redirect") ?? "/dashboard";
-  const callbackUrl = `${APP_URL}/auth/callback?redirect=${encodeURIComponent(cb)}`;
+  const origin = typeof window !== "undefined" ? window.location.origin : ""; 
+  const callbackUrl = `${origin}/auth/callback?redirect=${encodeURIComponent(cb)}`;
 
   async function sendMagicLink() {
     setBusy(true);
@@ -36,8 +36,8 @@ function SignInForm() {
   }
 
   async function signInGoogle() {
-    const cb = new URLSearchParams(window.location.search).get("redirect") ?? "/dashboard";
-    const callbackUrl = `${APP_URL}/auth/callback?redirect=${encodeURIComponent(cb)}`;
+    // const cb = new URLSearchParams(window.location.search).get("redirect") ?? "/dashboard";
+    // const callbackUrl = `${APP_URL}/auth/callback?redirect=${encodeURIComponent(cb)}`;
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
