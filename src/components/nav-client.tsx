@@ -10,13 +10,14 @@ import { useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { MinimalUser } from "@/types";
 
-
-
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   const pathname = usePathname();
   const active = pathname === href || pathname?.startsWith(href + "/");
   return (
-    <Link href={href} className={`px-2 py-1 text-sm rounded-md ${active ? "bg-muted" : "hover:bg-muted/60"}`}>
+    <Link
+      href={href}
+      className={`px-2 py-1 text-sm rounded-md ${active ? "bg-muted" : "hover:bg-muted/60"}`}
+    >
       {children}
     </Link>
   );
@@ -26,11 +27,17 @@ export default function NavClient({ user }: { user: MinimalUser | null }) {
   const { setTheme } = useTheme();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [signedOut, setSignedOut] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 border-b backdrop-blur supports-[backdrop-filter]:bg-background/70">
       <nav className="mx-auto max-w-6xl flex items-center justify-between p-3">
-        <Link href="/" className="font-bold">SmartKeys</Link>
+        <Link
+          href="/"
+          className="font-bold"
+        >
+          SmartKeys
+        </Link>
 
         <div className="flex items-center gap-2">
           <NavLink href="/pricing">Pricing</NavLink>
@@ -44,12 +51,20 @@ export default function NavClient({ user }: { user: MinimalUser | null }) {
             className="cursor-pointer"
             onClick={() => setTheme(document.documentElement.classList.contains("dark") ? "light" : "dark")}
           >
-            <Sun className="hidden dark:inline" size={16} aria-hidden />
-            <Moon className="inline dark:hidden" size={16} aria-hidden />
+            <Sun
+              className="hidden dark:inline"
+              size={16}
+              aria-hidden
+            />
+            <Moon
+              className="inline dark:hidden"
+              size={16}
+              aria-hidden
+            />
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {user ? (
+          {user && !signedOut ? (
             <Button
               variant="ghost"
               size="icon"
@@ -58,8 +73,10 @@ export default function NavClient({ user }: { user: MinimalUser | null }) {
               onClick={async () => {
                 setBusy(true);
                 await supabase.auth.signOut();
+                setSignedOut(true); // 👈 immediate UI feedback
                 setBusy(false);
                 router.push("/");
+                router.refresh(); // 👈 sync NavServer with logged-out state
               }}
               disabled={busy}
             >

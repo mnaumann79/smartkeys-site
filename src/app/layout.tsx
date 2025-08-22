@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
-import Nav from "@/components/nav";
+import NavServer from "@/components/nav-server";
 
 export const metadata: Metadata = {
   title: "SmartKeys — Global Autocorrect for Windows",
@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider>
-          <Nav />
+          <NavServer />
           {children}
         </ThemeProvider>
       </body>
