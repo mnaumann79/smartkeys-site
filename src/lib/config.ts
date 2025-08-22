@@ -19,12 +19,3 @@ const defaultAppUrl = IS_PROD
 
 // Allow a generic override if you set NEXT_PUBLIC_APP_URL
 export const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? defaultAppUrl;
-
-// Stripe Prices
-export const PRICE_PRO = IS_PROD
-  ? process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_PROD!
-  : (process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_DEV ?? process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_PROD)!;
-
-export const PRICE_LIFE = IS_PROD
-  ? process.env.NEXT_PUBLIC_STRIPE_PRICE_LIFETIME_PROD!
-  : (process.env.NEXT_PUBLIC_STRIPE_PRICE_LIFETIME_DEV ?? process.env.NEXT_PUBLIC_STRIPE_PRICE_LIFETIME_PROD)!;

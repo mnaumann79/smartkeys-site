@@ -21,7 +21,16 @@ export default async function LicensesPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/signin?redirect=/dashboard/licenses");
+
+    if (!user) {
+    return (
+      <main className="max-w-4xl mx-auto p-6">
+        <p className="text-sm text-muted-foreground">
+          You’re not signed in. <a className="underline" href="/signin?redirect=/dashboard/licenses">Sign in</a>
+        </p>
+      </main>
+    );
+  }
 
   const { data: raw } = await supabase
     .from("licenses")

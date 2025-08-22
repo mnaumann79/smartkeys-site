@@ -82,8 +82,9 @@ export default function Nav() {
             (user ? (
               <Button
                 variant="ghost"
-                size={"icon"}
+                size="icon"
                 className="cursor-pointer"
+                aria-label="Sign out"
                 onClick={async () => {
                   setBusy(true);
                   await supabase.auth.signOut();
@@ -94,8 +95,8 @@ export default function Nav() {
                 disabled={busy}
               >
                 <Image
-                  src={user?.user_metadata?.avatar_url} 
-                  alt="Sign out"
+                  src={user?.user_metadata?.avatar_url || "/favicon.ico"}
+                  alt="User avatar"
                   className="rounded-full"
                   width={24}
                   height={24}

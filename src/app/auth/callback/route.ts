@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { APP_URL } from "@/lib/config";
+import { metaString } from "@/lib/utils";
 
-type ProfileMeta = { full_name?: string; avatar_url?: string };
-
-function metaString(meta: unknown, key: keyof ProfileMeta): string | null {
-  if (typeof meta === "object" && meta) {
-    const v = (meta as Record<string, unknown>)[key as string];
-    return typeof v === "string" ? v : null;
-  }
-  return null;
-}
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

@@ -1,16 +1,28 @@
-import { redirect } from "next/navigation";
+// src/app/dashboard/page.tsx
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function Dashboard() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/signin?redirect=/dashboard");
+  const { data: { user } } = await supabase.auth.getUser();
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  // Soft fallback only — middleware should have redirected already.
+  if (!user) {
+    return (
+      <main className="max-w-3xl mx-auto p-6">
+        <p className="text-sm text-muted-foreground">
+          You’re not signed in. <a className="underline" href="/signin?redirect=/dashboard">Sign in</a>
+        </p>
+      </main>
+    );
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-4">
