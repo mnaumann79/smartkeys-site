@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import CopyButton from "@/components/copy-button";
+import CopyButton from "@/components/buttons/copy-button";
 import { publicStorageUrl } from "@/lib/storage/public-url";
 import { createClient } from "@/lib/supabase/server";
 
@@ -44,7 +44,10 @@ export default async function DownloadPage() {
               <div className="font-medium">Windows Installer (.exe)</div>
               <div className="text-sm text-muted-foreground">{data.file_path.split("/").pop()}</div>
             </div>
-            <a href={url} download>
+            <a
+              href={url}
+              download
+            >
               <Button size="lg">Download</Button>
             </a>
           </div>
@@ -67,7 +70,8 @@ export default async function DownloadPage() {
       </Card>
 
       <p className="text-sm text-muted-foreground">
-        SmartKeys supports Windows 7 and newer. If your browser warns about unknown publisher, click “More info → Run anyway”.
+        SmartKeys supports Windows 7 and newer. If your browser warns about unknown publisher, click “More info → Run
+        anyway”.
       </p>
     </main>
   );

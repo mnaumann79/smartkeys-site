@@ -28,8 +28,10 @@ export async function revokeLicense(id: string) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("auth");
+
   const { error } = await supabase.from("licenses").update({ status: "revoked" }).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);
+  
   revalidatePath("/dashboard/licenses");
 }
 

@@ -1,9 +1,8 @@
-import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import CopyButton from "@/components/copy-button";
+import CopyButton from "@/components/buttons/copy-button";
 import { issueTestLicense, revokeLicense, unbindDevice } from "./actions";
+import { FormSubmit } from "@/components/buttons/form-submit-button";
 
 type Activation = { device_id: string; device_name: string; activated_at: string };
 type License = {
@@ -22,11 +21,17 @@ export default async function LicensesPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-    if (!user) {
+  if (!user) {
     return (
       <main className="max-w-4xl mx-auto p-6">
         <p className="text-sm text-muted-foreground">
-          You’re not signed in. <a className="underline" href="/signin?redirect=/dashboard/licenses">Sign in</a>
+          You’re not signed in.{" "}
+          <a
+            className="underline"
+            href="/signin?redirect=/dashboard/licenses"
+          >
+            Sign in
+          </a>
         </p>
       </main>
     );
@@ -69,6 +74,11 @@ export default async function LicensesPage() {
     await revokeLicense(id);
   }
 
+  async function unbind(id: string) {
+    "use server";
+    await unbindDevice(id);
+  }
+
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Your Licenses</h1>
@@ -76,12 +86,13 @@ export default async function LicensesPage() {
       <Card>
         <CardContent className="p-4 space-y-3">
           <form action={createDevLicense}>
-            <Button
-              type="submit"
-              disabled={process.env.NODE_ENV !== "development"}
+            <FormSubmit
+              pendingText="Creating…"
+              variant="default"
+              className="min-w-[11rem]"
             >
               Create test license (dev only)
-            </Button>
+            </FormSubmit>
           </form>
 
           <div className="text-sm text-muted-foreground">
@@ -120,14 +131,27 @@ export default async function LicensesPage() {
                   </div>
                 </div>
 
-                {l.status === "active" && (
-                  <form action={revoke.bind(null, l.id)}>
-                    <Button variant="outline">Revoke</Button>
+                {l.status === "active" && l.activation && (
+                  <form action={unbind.bind(null, l.id)}>
+                    <FormSubmit
+                      variant="outline"
+                      pendingText="Unbinding…"
+                      className="min-w-[8.5rem]"
+                    >
+                      Unbind device
+                    </FormSubmit>
                   </form>
                 )}
-                {l.status === "active" && l.activation && (
-                  <form action={unbindDevice.bind(null, l.id)}>
-                    <Button variant="outline">Unbind device</Button>
+
+                {l.status === "active" && (
+                  <form action={revoke.bind(null, l.id)}>
+                    <FormSubmit
+                      variant="outline"
+                      pendingText="Revoking…"
+                      className="min-w-[8.5rem]"
+                    >
+                      Revoke
+                    </FormSubmit>
                   </form>
                 )}
               </CardContent>

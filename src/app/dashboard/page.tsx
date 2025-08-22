@@ -32,7 +32,7 @@ export default async function Dashboard() {
       </pre>
       <div className="mt-4">
         <Link href="/dashboard/licenses">
-          <Button variant="outline">Manage licenses</Button>
+          <Button className="cursor-pointer" variant="outline">Manage licenses</Button>
         </Link>
       </div>
     </main>

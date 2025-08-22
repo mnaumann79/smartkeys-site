@@ -1,5 +1,5 @@
 // Server component
-import NavClient from "@/components/nav-client";
+import NavClient from "@/components/navbar/nav-client";
 import { createClient } from "@/lib/supabase/server";
 import { metaString } from "@/lib/utils";
 import { MinimalUser } from "@/types";

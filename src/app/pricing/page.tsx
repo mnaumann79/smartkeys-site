@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { CheckoutButton } from "@/components/checkout-button";
+import { CheckoutButton } from "@/components/buttons/checkout-button";
 
 export const metadata: Metadata = { title: "Pricing — SmartKeys" };
 
