@@ -2,7 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { admin } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { signPayload } from "@/lib/sign";
 import { revalidatePath } from "next/cache";
 
@@ -21,6 +21,8 @@ function pgCode(err: unknown): string | null {
 }
 
 export async function POST(req: Request) {
+  const admin = createAdminClient();
+
   let successPayload: {
     ok: true;
     bound: true;

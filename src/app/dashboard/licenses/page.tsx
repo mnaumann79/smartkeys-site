@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import CopyButton from "@/components/buttons/copy-button";
 import { issueTestLicense, revokeLicense, unbindDevice } from "./actions";
-import { FormSubmit } from "@/components/buttons/form-submit-button";
+import { FormSubmitButton } from "@/components/buttons/form-submit-button";
 
 type Activation = { device_id: string; device_name: string; activated_at: string };
 type License = {
@@ -86,13 +86,13 @@ export default async function LicensesPage() {
       <Card>
         <CardContent className="p-4 space-y-3">
           <form action={createDevLicense}>
-            <FormSubmit
+            <FormSubmitButton
               pendingText="Creating…"
               variant="default"
               className="min-w-[11rem]"
             >
               Create test license (dev only)
-            </FormSubmit>
+            </FormSubmitButton>
           </form>
 
           <div className="text-sm text-muted-foreground">
@@ -108,8 +108,7 @@ export default async function LicensesPage() {
             <Card key={l.id}>
               <CardContent className="p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
                 <div>
-                  <div className="text-sm">Key</div>
-                  <div className="mt-1 text-xs">source: {l.source}</div>
+                  <div className="text-sm">Key · {l.source}</div>
                   <div className="flex items-center gap-2">
                     <code className="text-xs">{l.license_key}</code>
                     <CopyButton text={l.license_key} />
@@ -131,29 +130,30 @@ export default async function LicensesPage() {
                   </div>
                 </div>
 
-                {l.status === "active" && l.activation && (
-                  <form action={unbind.bind(null, l.id)}>
-                    <FormSubmit
-                      variant="outline"
-                      pendingText="Unbinding…"
-                      className="min-w-[8.5rem]"
-                    >
-                      Unbind device
-                    </FormSubmit>
-                  </form>
-                )}
-
-                {l.status === "active" && (
-                  <form action={revoke.bind(null, l.id)}>
-                    <FormSubmit
-                      variant="outline"
-                      pendingText="Revoking…"
-                      className="min-w-[8.5rem]"
-                    >
-                      Revoke
-                    </FormSubmit>
-                  </form>
-                )}
+                <div className="flex flex-row gap-2">
+                  {l.status === "active" && l.activation && (
+                    <form action={unbind.bind(null, l.id)}>
+                      <FormSubmitButton
+                        variant="outline"
+                        pendingText="Unbinding…"
+                        className="min-w-[8.5rem]"
+                      >
+                        Unbind device
+                      </FormSubmitButton>
+                    </form>
+                  )}
+                  {l.status === "active" && (
+                    <form action={revoke.bind(null, l.id)}>
+                      <FormSubmitButton
+                        variant="outline"
+                        pendingText=""
+                        className="min-w-[8.5rem]"
+                      >
+                        Revoke
+                      </FormSubmitButton>
+                    </form>
+                  )}
+                </div>
               </CardContent>
             </Card>
           );

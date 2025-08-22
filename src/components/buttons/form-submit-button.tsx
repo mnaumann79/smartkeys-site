@@ -16,7 +16,7 @@ type Props = {
  * A submit button that automatically reflects the server action's pending state.
  * Disables itself while pending and swaps label (and shows a spinner).
  */
-export function FormSubmit({ children, pendingText = "Working…", variant, size, className }: Props) {
+export function FormSubmitButton({ children, pendingText = "Working…", variant, size, className }: Props) {
   const { pending } = useFormStatus();
 
   return (

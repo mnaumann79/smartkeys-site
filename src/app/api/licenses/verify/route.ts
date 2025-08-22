@@ -2,10 +2,11 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
-import { admin } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { signPayload } from "@/lib/sign";
 
 export async function GET(req: Request) {
+  const admin = createAdminClient();
   const url = new URL(req.url);
   const license_key = url.searchParams.get("license_key");
   const device_id = url.searchParams.get("device_id");

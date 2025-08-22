@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { admin } from "@/lib/supabase/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
-  const adminUsers = await admin.auth.admin.listUsers(); // requires service-role
-  const { error: rlsErr } = await admin.from("profiles").select("id").limit(1); // bypasses RLS
+
+  const supabase = createAdminClient();
+
+  const adminUsers = await supabase.auth.admin.listUsers(); // requires service-role
+  const { error: rlsErr } = await supabase.from("profiles").select("id").limit(1); // bypasses RLS
 
   return NextResponse.json({
     hasServiceRole: !("error" in adminUsers) || !adminUsers.error,

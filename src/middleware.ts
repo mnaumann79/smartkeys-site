@@ -40,6 +40,7 @@ function startsWithAny(pathname: string, prefixes: string[]) {
 }
 
 export async function middleware(req: NextRequest) {
+  console.log(process.env.NODE_ENV)
   const isLoggedIn = await userLoggedIn();
   const { pathname, search } = req.nextUrl;
 
