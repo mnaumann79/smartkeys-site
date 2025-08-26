@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { APP_URL } from "@/lib/config";
+import { handleClientError } from "@/lib/error-handling";
 
 function SignInForm() {
   const [email, setEmail] = useState("");
@@ -39,33 +40,68 @@ function SignInForm() {
     }
 
     setBusy(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: callbackUrl },
-    });
-    setBusy(false);
-    if (!error) router.push("/check-email");
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: callbackUrl },
+      });
+
+      if (error) {
+        const errorMessage = handleClientError(error, "magic link signin");
+        // You could show this error to the user
+        console.error("Magic link error:", errorMessage);
+      } else {
+        router.push("/check-email");
+      }
+    } catch (err) {
+      const errorMessage = handleClientError(err, "magic link signin");
+      console.error("Magic link error:", errorMessage);
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function signInGitHub() {
     setBusy(true);
-    // console.log(callbackUrl)
-    await supabase.auth.signInWithOAuth({
-      provider: "github",
-      options: { redirectTo: callbackUrl },
-    });
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "github",
+        options: { redirectTo: callbackUrl },
+      });
+
+      if (error) {
+        const errorMessage = handleClientError(error, "GitHub OAuth");
+        console.error("GitHub OAuth error:", errorMessage);
+      }
+    } catch (err) {
+      const errorMessage = handleClientError(err, "GitHub OAuth");
+      console.error("GitHub OAuth error:", errorMessage);
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function signInGoogle() {
     setBusy(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: callbackUrl,
+          queryParams: { access_type: "offline", prompt: "consent" },
+        },
+      });
 
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: callbackUrl,
-        queryParams: { access_type: "offline", prompt: "consent" },
-      },
-    });
+      if (error) {
+        const errorMessage = handleClientError(error, "Google OAuth");
+        console.error("Google OAuth error:", errorMessage);
+      }
+    } catch (err) {
+      const errorMessage = handleClientError(err, "Google OAuth");
+      console.error("Google OAuth error:", errorMessage);
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (

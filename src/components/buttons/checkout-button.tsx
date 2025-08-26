@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { handleClientError } from "@/lib/error-handling";
 
 // Button that initiates a server‑created Stripe Checkout Session and redirects the user
 // Importance: main user entry to purchase; includes defensive checks and user‑friendly errors.
@@ -74,8 +75,8 @@ export function CheckoutButton({ priceId, children }: Props) {
       window.location.href = url;
     } catch (err: unknown) {
       // Network or unexpected errors
-      console.error("Checkout error:", err);
-      setMessage("Could not reach checkout. Please try again.");
+      const errorMessage = handleClientError(err, "checkout button");
+      setMessage(errorMessage);
     } finally {
       // If we redirected, this line won't run; otherwise it re-enables the button
       setBusy(false);
