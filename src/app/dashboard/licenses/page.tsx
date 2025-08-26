@@ -3,16 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import CopyButton from "@/components/buttons/copy-button";
 import { issueTestLicense, revokeLicense, unbindDevice } from "./actions";
 import { FormSubmitButton } from "@/components/buttons/form-submit-button";
-
-type Activation = { device_id: string; device_name: string; activated_at: string };
-type License = {
-  id: string;
-  license_key: string;
-  status: string;
-  source: string;
-  created_at: string;
-  activation: Activation | null;
-};
+import type { LicenseWithActivation } from "@/types";
 
 export default async function LicensesPage() {
   const supabase = createClient();
@@ -55,12 +46,15 @@ export default async function LicensesPage() {
     )
     .order("created_at", { ascending: false });
 
-  const licenses: License[] = (raw ?? []).map(r => ({
+  const licenses: LicenseWithActivation[] = (raw ?? []).map(r => ({
     id: r.id,
+    user_id: r.user_id,
     license_key: r.license_key,
     status: r.status,
     source: r.source,
+    external_id: r.external_id,
     created_at: r.created_at,
+    updated_at: r.updated_at,
     activation: Array.isArray(r.activation) ? r.activation[0] ?? null : r.activation ?? null,
   }));
 

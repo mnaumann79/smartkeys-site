@@ -47,7 +47,7 @@ export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 // Generic API response contract (optional helper for consumers/tests)
 export const apiResponseSchema = z.object({
   success: z.boolean(),
-  data: z.any().optional(),
+  data: z.unknown().optional(),
   error: z.string().optional(),
 });
 

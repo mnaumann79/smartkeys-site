@@ -1,14 +1,8 @@
 import { NextResponse } from "next/server";
+import type { ApiResponse, ApiErrorResponse, ApiSuccessResponse, HttpStatusCode } from "@/types";
 
 // NOTE: Centralized helpers for API responses, input sanitization, and basic rate‑limiting.
 // Importance: promotes consistency, reduces boilerplate, and hardens endpoints against abuse.
-
-// Standard API response types
-export interface ApiResponse<T = unknown> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
 
 // Helper functions for consistent API responses
 // Consistent success envelope for API routes

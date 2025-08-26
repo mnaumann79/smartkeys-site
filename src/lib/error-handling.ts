@@ -3,6 +3,7 @@
 // This ensures proper logging, user-friendly error messages, and security by not exposing internal details.
 
 import { NextResponse } from "next/server";
+import type { ApiErrorResponse, HttpStatusCode } from "@/types";
 
 // Interface for errors that may have a code property
 // Importance: Provides type safety when accessing optional error properties
@@ -99,17 +100,10 @@ export function logError(level: LogLevel, message: string, error?: Error, contex
 
 // API error response helpers
 // Importance: Provides consistent error responses across all API routes
-export interface ApiErrorResponse {
-  success: false;
-  error: string;
-  message: string;
-  code?: string;
-  details?: string;
-}
 
 export function createApiErrorResponse(
   error: Error,
-  status: number = 500,
+  status: HttpStatusCode = 500,
   includeDetails: boolean = false
 ): NextResponse<ApiErrorResponse> {
   const response: ApiErrorResponse = {

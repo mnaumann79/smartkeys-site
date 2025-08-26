@@ -3,22 +3,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { handleClientError } from "@/lib/error-handling";
+import type { CheckoutButtonProps, ApiResponse } from "@/types";
 
 // Button that initiates a server‑created Stripe Checkout Session and redirects the user
 // Importance: main user entry to purchase; includes defensive checks and user‑friendly errors.
-type Props = {
-  priceId: string;
-  children: React.ReactNode;
-};
 
-// Expected API response shape
-type CheckoutResponse = {
-  success: boolean;
-  data?: { url: string };
-  error?: string;
-};
+// Expected API response shape for checkout
+type CheckoutResponse = ApiResponse<{ url: string }>;
 
-export function CheckoutButton({ priceId, children }: Props) {
+export function CheckoutButton({ priceId, children }: CheckoutButtonProps) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
