@@ -3,28 +3,34 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 
+// Button that initiates a server‑created Stripe Checkout Session and redirects the user
+// Importance: main user entry to purchase; includes defensive checks and user‑friendly errors.
 type Props = {
   priceId: string;
   children: React.ReactNode;
 };
 
 // Expected API response shape
-type CheckoutResponse =
-  | { url: string } // success
-  | { error: string; [key: string]: unknown }; // error case
+type CheckoutResponse = {
+  success: boolean;
+  data?: { url: string };
+  error?: string;
+};
 
 export function CheckoutButton({ priceId, children }: Props) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   async function startCheckout() {
-    if (!priceId) {
-      setMessage("Missing price ID.");
+    if (!priceId || priceId.trim() === "") {
+      setMessage("Missing or invalid price ID. Please contact support.");
       return;
     }
 
     setBusy(true);
     setMessage(null);
+
+    console.log("Starting checkout with price ID:", priceId);
 
     try {
       const res = await fetch("/api/checkout", {
@@ -43,6 +49,7 @@ export function CheckoutButton({ priceId, children }: Props) {
         } catch {
           // ignore JSON parse errors
         }
+        console.error("Checkout API error:", { status: res.status, reason });
         setMessage(`Checkout failed: ${reason}`);
         return;
       }
@@ -56,7 +63,8 @@ export function CheckoutButton({ priceId, children }: Props) {
         return;
       }
 
-      const url = data?.url;
+      // Our API returns { success: true, data: { url } }
+      const url = data?.data?.url;
       if (!url || typeof url !== "string") {
         setMessage("Checkout failed: no redirect URL returned.");
         return;

@@ -12,13 +12,32 @@ import { APP_URL } from "@/lib/config";
 function SignInForm() {
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const router = useRouter();
   const cb = useSearchParams().get("redirect") ?? "/dashboard";
-  // const origin = typeof window !== "undefined" ? window.location.origin : ""; 
-  const base = APP_URL
+  const base = APP_URL;
   const callbackUrl = `${base}/auth/callback?redirect=${encodeURIComponent(cb)}`;
 
+  // Email validation function
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email) {
+      setEmailError("Email is required");
+      return false;
+    }
+    if (!emailRegex.test(email)) {
+      setEmailError("Please enter a valid email address");
+      return false;
+    }
+    setEmailError("");
+    return true;
+  };
+
   async function sendMagicLink() {
+    if (!validateEmail(email)) {
+      return;
+    }
+
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({
       email,
@@ -58,9 +77,14 @@ function SignInForm() {
             id="email"
             type="email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => {
+              setEmail(e.target.value);
+              if (emailError) validateEmail(e.target.value);
+            }}
             placeholder="you@email.com"
+            className={emailError ? "border-red-500" : ""}
           />
+          {emailError && <p className="text-sm text-red-500">{emailError}</p>}
         </div>
         <Button
           className="w-full cursor-pointer"
